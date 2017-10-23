@@ -2,17 +2,23 @@
 
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
-import { Links } from './links.js';
+import oddsPortal from '../oddsPortalInit';
+const oddsPortalPromise = oddsPortal();
+
+import cheerio from 'cheerio';
 
 Meteor.methods({
-  'links.insert'(title, url) {
-    check(url, String);
-    check(title, String);
+    async 'links.insert'(phrase) {
+        check(phrase, String);
 
-    return Links.insert({
-      url,
-      title,
-      createdAt: new Date(),
-    });
-  },
+        let $;
+        const oddsPortalPage = await oddsPortalPromise;
+
+        content = await oddsPortalPage.property('content');
+        $ = cheerio.load(content);
+        console.log('%c MATIdebug: ', 'background: #222; color: #bada55', $('th.first2.tl').length);
+        return content;//$('th.first2.tl');
+        // console.log(content);
+
+    },
 });

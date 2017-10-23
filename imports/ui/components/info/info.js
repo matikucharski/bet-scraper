@@ -3,30 +3,29 @@ import { Meteor } from 'meteor/meteor';
 import './info.html';
 
 Template.info.onCreated(function () {
-  Meteor.subscribe('links.all');
+    Meteor.subscribe('links.all');
 });
 
 Template.info.helpers({
-  links() {
-    return Links.find({});
-  },
+    results() {
+      return Links.find({});
+    }
 });
 
 Template.info.events({
-  'submit .info-link-add'(event) {
-    event.preventDefault();
+    'submit .info-link-add'(event) {
+        event.preventDefault();
 
-    const target = event.target;
-    const title = target.title;
-    const url = target.url;
+        const target = event.target;
+        const phrase = target.phrase;
 
-    Meteor.call('links.insert', title.value, url.value, (error) => {
-      if (error) {
-        alert(error.error);
-      } else {
-        title.value = '';
-        url.value = '';
-      }
-    });
-  },
+        Meteor.call('links.insert', phrase.value, (error, res) => {
+            if (error) {
+                alert(error.error);
+            } else {
+                console.log('%c MATIdebug: ', 'background: #222; color: #bada55', res);
+                phrase.value = '';
+            }
+        });
+    },
 });
